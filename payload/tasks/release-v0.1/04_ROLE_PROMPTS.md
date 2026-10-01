@@ -1,84 +1,64 @@
-<div dir="rtl">
+# Agent Role Registry & Operational Contracts (v0.1)
 
-# لبيب — سجل أدوار الوكلاء وعقود التكليف (Agent Role Registry)
-**تاريخ التحديث:** 1 أكتوبر 2026 | **المرجع:** [02_OPERATING_MANUAL.md](./02_OPERATING_MANUAL.md)
+**Last Updated:** [YYYY-MM-DD] | **Reference:** [02_OPERATING_MANUAL.md](./02_OPERATING_MANUAL.md)
 
 > [!IMPORTANT]
-> هذه الوثيقة لم تعد تحتوي Prompts للنسخ واللصق بين الجلسات. الأدوار أصبحت **Custom Agents + Agent Skills** داخل Plugin `labeeb-shipping-mode`. الغاية من هذا السجل هي معرفة من يملك كل قرار وحدود صلاحياته.
+> This registry serves as the architectural reference for all specialized agent roles within the Shipping Mode plugin. Operational boundaries, tool access, and permissions are defined below.
 
 ---
 
 ## 1. Release Coordinator
 
 - **Agent:** `release-coordinator`
-- **Slash entrypoints:** `/shipping`, `/lead`, `/delivery-lead`, `/release-cycle` (توافق خلفي)
-- **المسؤولية:** إدارة دورة Shipping Mode كاملة، اختيار proof target، WIP=1، تشغيل بقية الوكلاء، المصالحة، تحديث الحالة.
-- **يسمح له:** تحديث Release Control والسبرينت والتقارير؛ تفويض discovery/implementation/audit؛ targeted correction؛ إغلاق المهام الروتينية بعد PASS مستقل.
-- **يمنع عليه:** كتابة product code بنفسه؛ تغيير الميثاق/التفويض/المعمارية دون قرار محفوظ.
+- **Slash Commands:** `/shipping`, `/lead`, `/delivery-lead`, `/release-cycle`
+- **Primary Responsibility:** Orchestrates the complete Shipping Mode lifecycle, enforces `WIP = 1`, dispatches specialized subagents, reconciles evidence, and updates release status.
+- **Permitted Actions:** Update control boards, active sprint files, and reports; delegate discovery, implementation, and audit tasks; dispatch targeted corrections; close routine tasks after an independent `PASS`.
+- **Forbidden Actions:** Writing production code directly; modifying release contract, delegation boundaries, or major architecture without a reserved founder decision.
 
 ---
 
 ## 2. Discovery Coordinator
 
 - **Agent:** `discovery-coordinator`
-- **Skill:** `/discovery`
-- **المسؤولية:** سؤال واحد Runtime-First، proof boundaries، canonical entrypoint، experiment fidelity، Finding Card.
-- **صلاحية التغيير:** Read-only. إذا احتاج mutation يستخدم Experiment Broker وexecutor منفصل.
-- **ممنوع:** broad architecture archaeology كبديل عن runtime، إصلاح الكود، توسيع Finding إلى Task بنفسه.
+- **Slash Command:** `/discovery`
+- **Primary Responsibility:** Evaluates single, bounded runtime questions using runtime-first exploration, defines proof boundaries, determines canonical entrypoints, and generates empirical Finding Cards.
+- **Permitted Actions:** Read-only exploration and inspection; dispatches experiments via `discovery-experiment-executor`.
+- **Forbidden Actions:** Broad speculative archaeology in lieu of runtime probes; writing production code; escalating findings to tasks autonomously.
 
-### مساعدو Discovery
-- `discovery-researcher`: سؤال read-only ضيق فقط.
-- `discovery-experiment-executor`: تجربة Local محددة فقط؛ لا كود/migrations/deploy/git.
+### Specialized Discovery Subagents
+- `discovery-researcher`: Focused, read-only code and configuration investigation.
+- `discovery-experiment-executor`: Executes bounded, reversible local test scenarios without source code changes or migrations.
 
 ---
 
 ## 3. Implementation Executor
 
 - **Agent:** `implementation-executor`
-- **Skills:** `/exec`, `/executor`
-- **المدخل الإلزامي:** `task_contract` مثبت ومقيد.
-- **المسؤولية:** أصغر تعديل يعالج الفشل المرصود + validation محلي.
-- **ممنوع:** اختيار المهمة، توسيع scope، governance edits، push/merge/deploy، self-audit.
-- **Workspace:** `branch` مفضل للتعديلات المستقلة؛ `inherit` عندما يعتمد الإثبات على Docker/runtime المحلي الحالي.
+- **Slash Commands:** `/exec`, `/executor`
+- **Mandatory Input:** A frozen, bounded `task_contract`.
+- **Primary Responsibility:** Implements the minimal necessary code change to resolve the exact observed failure, accompanied by local validation tests.
+- **Forbidden Actions:** Expanding scope beyond the contract; modifying governance or workflow policies; executing git push, pull request merge, or production deployment; self-auditing.
 
 ---
 
 ## 4. Independent Release Auditor
 
 - **Agent:** `release-auditor`
-- **Skills:** `/audit`, `/auditor`
-- **المسؤولية:** إعادة original proof path مستقلاً وإصدار `PASS | FAIL | BLOCKED | UNKNOWN`.
-- **ممنوع:** تعديل product code أو إصلاح ما يراه أثناء التدقيق.
-- **مخرجاته:** تقرير تحت `tasks/release-v0.1/reports/` + دليل قابل للمصالحة.
+- **Slash Commands:** `/audit`, `/auditor`
+- **Primary Responsibility:** Re-runs the original proof path in an isolated, independent session and issues an empirical verdict: `PASS`, `FAIL`, `BLOCKED`, or `UNKNOWN`.
+- **Forbidden Actions:** Modifying production code or fixing issues discovered during audit.
+- **Primary Output:** Audit report saved under `tasks/release-v0.1/reports/` with verifiable artifacts.
 
 ---
 
-## 5. Orchestrator
+## 5. Authority & Decision Matrix
 
-لم يعد `/manager-handoff` مرحلة منفصلة.
-
-ترتيب التفويض:
-1. Native Antigravity `invoke_subagent`.
-2. Orchestrator CLI عند غياب native subagents، أو طلب نموذج خارجي بعينه، أو حاجة مستقلة مادية.
-3. لا manual copy/paste للمؤسس.
-
-المعالجة الافتراضية عند fallback:
-- `claude-code`: read-only research / independent audit إذا كان متاحاً.
-- `codex`: bounded implementation إذا كان متاحاً.
-- يجب التحقق من runtime/model الحاليين عبر Orchestrator بدلاً من افتراض وجودهما.
-
----
-
-## 6. مصفوفة السلطة
-
-| القرار | المالك |
+| Decision Type | Authorized Owner |
 |---|---|
-| ما proof target التالي؟ | Release Coordinator |
-| هل الـruntime يعمل فعلياً؟ | Discovery/Auditor حسب المرحلة |
-| كيف ننفذ Task Contract؟ | Implementation Executor ضمن الحدود |
-| هل الإصلاح اجتاز proof path؟ | Independent Auditor |
-| هل يتحول Finding روتيني إلى Task؟ | Release Coordinator |
-| تغيير scope/قيمة/معمارية كبرى/مخاطر جوهرية | المؤسس |
-| Go/No-Go العام | المؤسس |
-
-</div>
+| Next Proof Target Selection | Release Coordinator |
+| Runtime Verification & Failure Isolation | Discovery Coordinator / Release Auditor |
+| Task Implementation Mechanics | Implementation Executor (within Task Contract) |
+| Independent Acceptance & Verification | Release Auditor |
+| Routine Finding-to-Task Conversion | Release Coordinator |
+| Core Scope / Contract / Major Architecture | Founder / Product Owner |
+| Final Public Release Approval (Go / No-Go) | Founder / Product Owner |

@@ -1,35 +1,29 @@
-<div dir="rtl">
+# Release Sprint S01 (Active Sprint Plan)
 
-# الدورة الأسبوعية الأولى (Sprint S01)
-**الفترة الزمنية:** 30 سبتمبر 2026 — 7 أكتوبر 2026  
-**الحالة:** نشطة حالياً (ACTIVE)  
-**الهدف الميداني للدورة الأصلي:**  
-> «تمكين المستخدم العربي من بدء جلسة تحقق في استوديو لبيب على الموقع الحي دون أخطاء، ووصول الطلب إلى نتيجة قابلة للفحص لأول مرة.»
-
-> [!IMPORTANT]
-> في 1 أكتوبر سُجل في Release Control قرار مؤسس بتأجيل التدقيق الحي للاستوديو مؤقتاً واعتماد Local-First لفحص Pipeline كتمهيد ضروري. لذلك **Release Control هو المرجع الأحدث لـWIP الحالي**؛ هذه الوثيقة تنظّم الأسبوع ولا تتغلب على قرار أحدث مثبت.
+**Sprint Window:** [YYYY-MM-DD] — [YYYY-MM-DD]
+**Status:** ACTIVE
+**Primary Field Goal:**
+> "Verify core user journey initiation and end-to-end data processing in the local runtime environment to achieve field acceptance for Criterion 1 and Criterion 2."
 
 ---
 
-## WIP الحالي
+## Active Work & Queue (`WIP = 1`)
 
-| الأسبقية | الرمز | العمل | العلاقة بالميثاق | الحالة |
+| Priority | Task Identifier | Target Work Unit | Release Alignment | Status |
 |:---:|---|---|---|:---:|
-| **1** | **TASK-BE-DISCOVERY** | Runtime-First discovery لمسار استيعاب الأخبار والادعاءات محلياً؛ إثبات المسار أو أول failure boundary | تمهيد تأسيسي للمعايير 2،3،5 وعودة رحلة الاستوديو | 🎯 **ACTIVE — WIP=1** |
-| **2** | **B-01 & B-02** | إعادة فحص بدء جلسة الاستوديو ومطابقة النشر الحي | المعيار 1 و6 | ⏸️ مؤجل وفق قرار 1 أكتوبر حتى اكتمال التمهيد المحلي المطلوب |
-| **3** | **B-03** | تدفق الادعاء العربي والنتيجة | المعيار 2 | ⏸️ بعد استئناف الرحلة الحية |
-| **4** | **B-04** | الأدلة والمراجع والعربية | المعيار 3 و4 | ⏸️ لاحق |
-| **5** | **AUD-01** | تدقيق مستقل لرحلة القبول | المعايير 1-4 | ⏸️ بعد جاهزية الرحلة |
+| **1** | **TASK-CORE-DISCOVERY-001** | Runtime-First exploration of the core ingestion and processing pipeline; prove execution path or isolate the earliest failure boundary. | Foundation for Criteria 1, 2, and 5 | 🎯 **ACTIVE — WIP=1** |
+| **2** | **TASK-ENTRYPOINT-002** | Verify user entrypoint session initialization and stable ID assignment. | Criterion 1 | ⏸️ Queued |
+| **3** | **TASK-PROCESSING-003** | Verify end-to-end request processing, payload persistence, and result tracking. | Criterion 2 | ⏸️ Queued |
+| **4** | **TASK-EVIDENCE-004** | Verify citation formatting, data freshness, and reference integrity. | Criteria 3 & 4 | ⏸️ Queued |
+| **5** | **AUD-SPRINT-001** | Independent audit of completed acceptance paths. | Criteria 1–4 | ⏸️ Queued |
 
 ---
 
-## طريقة التشغيل بعد Migration
+## Operational Workflow
 
-- `/shipping` يدير السبرينت من الميثاق والأدلة.
-- `/discovery` هو المسار الحالي لـ`TASK-BE-DISCOVERY`.
-- لا يتحول Finding إلى كود إلا بعد Delegation Gate وعقد مهمة مقيد.
-- لا تغير Migration نظام الوكلاء أي status فني للمنتج بحد ذاتها.
+1. `/shipping` coordinates the sprint from the frozen contract and empirical evidence.
+2. `/discovery` serves as the runtime-first path for unverified boundaries.
+3. Proven findings convert to implementation tasks via bounded Task Contracts.
+4. Independent verification by `release-auditor` is required prior to task closure.
 
-**المرجع:** [00_RELEASE_CONTROL.md](../00_RELEASE_CONTROL.md)
-
-</div>
+**Core Reference:** [00_RELEASE_CONTROL.md](../00_RELEASE_CONTROL.md)
