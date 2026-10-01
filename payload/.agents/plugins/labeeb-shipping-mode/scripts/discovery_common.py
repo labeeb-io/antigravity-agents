@@ -76,8 +76,13 @@ def latest_user_text(transcript: str) -> str:
 
 
 def actor_from_transcript(transcript: str) -> str:
+    # Check only if first step / step 0 is subagent declaration
+    first_chunk = transcript[:3000] if transcript else ""
+    # If it is main conversation, step 0 has USER_INPUT / USER_REQUEST
+    if '"step_index":0' in first_chunk and "USER_INPUT" in first_chunk:
+        return "parent"
     for actor, marker in ACTOR_MARKERS.items():
-        if marker in transcript:
+        if marker in first_chunk and (f"Marker: {marker}" in first_chunk or f"Marker: `{marker}`" in first_chunk):
             return actor
     return "parent"
 
