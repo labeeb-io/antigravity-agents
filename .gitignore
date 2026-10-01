@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Backups & Temp
+*.tmp
+*.bak
+*.swp
+*~
+.migration-backups/
+.DS_Store

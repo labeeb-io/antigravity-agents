@@ -1,0 +1,5 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "labeeb-shipping-mode",
+  "description": "Labeeb v0.1 Shipping Mode: contract-driven release coordination, runtime-first discovery, isolated implementation, independent audit, evidence reconciliation, and bounded founder escalation."
+}
