@@ -5,6 +5,7 @@ TARGET=${1:-}; BACKUP=${2:-}
 TARGET=$(cd "$TARGET" && pwd); BACKUP=$(cd "$BACKUP" && pwd)
 
 rm -rf "$TARGET/.agents/plugins/labeeb-shipping-mode"
+rm -rf "$TARGET/.agents/agents"
 rm -f "$TARGET/tasks/release-v0.1/AGENT_SYSTEM_ARCHITECTURE.md"
 rm -f "$TARGET/tasks/release-v0.1/CHANGELOG.md"
 rm -rf "$TARGET/tasks/release-v0.1/archive/legacy-agent-system"
